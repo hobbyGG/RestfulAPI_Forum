@@ -1,0 +1,25 @@
+prj_name: "restful_forum"
+version: "0.0.1"
+mode: "debug"
+host: "127.0.0.1"
+port: 8888
+
+log:
+  file_name: "log"
+  level: "debug"
+  max_size: 50
+  max_backup: 3
+  max_age: 28
+
+mysql:
+  user_name: "root"
+  password: "123"
+  host: "127.0.0.1"
+  port: "3306"
+  dbname: "rforum"
+
+redis:
+  host: "localhost"
+  port: "6379"
+  pwd: ""
+  dbnum: 0

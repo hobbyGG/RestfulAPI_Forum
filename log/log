@@ -1,0 +1,130 @@
+2025-02-19T15:02:44.967+0800	info	shut down succes
+bye~
+2025-02-22T19:50:41.571+0800	info	shut down succes
+bye~
+2025-02-22T19:51:10.538+0800	info	shut down succes
+bye~
+2025-02-22T19:52:00.313+0800	error	ShouldBindJSON user error	{"error": "Key: 'ParamSignUp.UserName' Error:Field validation for 'UserName' failed on the 'required' tag"}
+2025-02-22T19:52:44.601+0800	error	snowflake.GetID error	{"error": "所用的指针为空"}
+2025-02-22T19:52:44.601+0800	error	service.SignUp error	{"error": "所用的指针为空"}
+2025-02-22T19:52:50.394+0800	error	ShouldBindJSON user error	{"error": "Key: 'ParamSignUp.UserName' Error:Field validation for 'UserName' failed on the 'required' tag"}
+2025-02-22T19:53:32.861+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-22T19:57:32.771+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-22T19:58:09.019+0800	error	json bind login error	{"error": "invalid character '}' looking for beginning of object key string"}
+2025-02-22T23:32:55.989+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-23T16:17:41.401+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-23T16:29:57.616+0800	error	json bind login error	{"error": "Key: 'ParamLogin.UserName' Error:Field validation for 'UserName' failed on the 'required' tag\nKey: 'ParamLogin.Pwd' Error:Field validation for 'Pwd' failed on the 'required' tag"}
+2025-02-23T16:30:47.328+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-23T16:40:45.157+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-23T16:40:45.157+0800	info	shut down succes
+bye~
+2025-02-24T14:56:30.134+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-24T14:56:30.134+0800	info	shut down succes
+bye~
+2025-02-24T15:16:04.210+0800	error	time.Parse error	{"error": "parsing time \"2025-02-24 15:16:04.1926928 +0800 CST m=+0.016441301\": extra text: \" 15:16:04.1926928 +0800 CST m=+0.016441301\""}
+2025-02-24T15:16:04.211+0800	error	snowflake.GetID error	{"error": "所用的指针为空"}
+2025-02-24T15:16:04.211+0800	error	service.CreatePost	{"error": "所用的指针为空"}
+2025-02-24T15:35:08.848+0800	info	shut down succes
+bye~
+2025-02-24T15:35:08.848+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-25T15:15:15.124+0800	error	user token error	{"error": "用户不存在"}
+2025-02-25T15:17:48.118+0800	error	user token error	{"error": "用户不存在"}
+2025-02-25T20:03:27.264+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:03:27.265+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:03:43.504+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:03:43.504+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:08:05.265+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:08:05.265+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:13:00.521+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:13:00.523+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:13:00.523+0800	info	error detail	{"token:": ""}
+2025-02-25T20:13:00.523+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:13:00.523+0800	info	error detail	{"token:": ""}
+2025-02-25T20:14:02.677+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:14:02.679+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:14:02.679+0800	info	error detail	{"token:": ""}
+2025-02-25T20:14:02.679+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:14:02.679+0800	info	error detail	{"token:": ""}
+2025-02-25T20:14:12.546+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:14:12.547+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:14:12.548+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:14:12.548+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:14:12.548+0800	info	error detail	{"token:": ""}
+2025-02-25T20:14:12.548+0800	error	jwt.ParseToken error	{"error": "需要token"}
+2025-02-25T20:14:12.548+0800	info	error detail	{"token:": ""}
+2025-02-25T20:17:11.873+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:19:15.565+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:19:15.566+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:20:02.298+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:20:02.300+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:20:02.302+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:20:02.302+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:20:37.389+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:20:37.390+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:26:02.251+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:27:10.692+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:30:41.274+0800	info	user 180268711284736 login num over 3
+2025-02-25T20:31:23.888+0800	info	user 180268711284736 login num over 3
+2025-02-25T21:09:58.083+0800	info	user 180268711284736 login num over 2
+2025-02-25T21:09:59.092+0800	error	user token error	{"error": "用户未登录"}
+2025-02-25T21:10:30.625+0800	info	user 180268711284736 login num over 2
+2025-02-25T21:10:31.635+0800	error	user token error	{"error": "用户未登录"}
+2025-02-25T21:12:02.234+0800	info	user 180268711284736 login num over 2
+2025-02-25T21:12:03.250+0800	error	user token error	{"error": "用户未登录"}
+2025-02-25T21:15:03.694+0800	info	user 180268711284736 login num over 3
+2025-02-25T21:15:04.697+0800	error	user token error	{"error": "用户未登录"}
+2025-02-25T21:15:15.339+0800	info	user 180268711284736 login num over 3
+2025-02-25T21:15:16.350+0800	error	user token error	{"error": "用户未登录"}
+2025-02-25T21:26:50.013+0800	info	user 180268711284736 login num over 3
+2025-02-25T21:26:50.014+0800	error	user token error	{"error": "用户未登录"}
+2025-02-25T22:01:17.137+0800	error	json bind login error	{"error": "Key: 'ParamLogin.UserName' Error:Field validation for 'UserName' failed on the 'required' tag\nKey: 'ParamLogin.Pwd' Error:Field validation for 'Pwd' failed on the 'required' tag"}
+2025-02-25T22:01:24.711+0800	error	user token error	{"error": "用户未登录"}
+2025-02-25T22:02:16.126+0800	error	json bind login error	{"error": "invalid character '}' looking for beginning of object key string"}
+2025-02-25T22:02:34.643+0800	error	user token error	{"error": "用户未登录"}
+2025-02-25T22:02:46.578+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-25T22:02:46.578+0800	info	shut down succes
+bye~
+2025-02-25T22:04:14.275+0800	error	user token error	{"error": "用户未登录"}
+2025-02-25T22:06:30.381+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-25T22:06:30.381+0800	info	shut down succes
+bye~
+2025-02-25T22:34:40.009+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-25T22:34:40.009+0800	info	shut down succes
+bye~
+2025-02-26T16:56:47.793+0800	error	cli.HGet error	{"error": "redis: nil"}
+2025-02-26T16:56:47.824+0800	error	db.Get error	{"error": "sql: no rows in result set"}
+2025-02-26T16:56:47.824+0800	error	mysql.GetPostByID error	{"error": "sql: no rows in result set"}
+2025-02-26T16:58:40.867+0800	error	cli.HGet error	{"error": "redis: nil"}
+2025-02-26T17:00:39.405+0800	error	cli.HGet error	{"error": "redis: nil"}
+2025-02-26T17:02:30.379+0800	error	cli.HGet error	{"error": "redis: nil"}
+2025-02-26T17:02:30.380+0800	error	db.Get error	{"error": "sql: no rows in result set"}
+2025-02-26T17:02:30.380+0800	error	mysql.GetPostByID error	{"error": "sql: no rows in result set"}
+2025-02-26T17:04:15.839+0800	error	cli.HGet error	{"error": "redis: nil"}
+2025-02-26T17:04:15.842+0800	error	db.Get error	{"error": "sql: no rows in result set"}
+2025-02-26T17:04:15.842+0800	error	mysql.GetPostByID error	{"error": "sql: no rows in result set"}
+2025-02-26T17:12:25.174+0800	error	user token error	{"error": "用户未登录"}
+2025-02-26T17:12:47.201+0800	error	cli.HGet error	{"error": "redis: nil"}
+2025-02-26T17:12:47.203+0800	error	db.Get error	{"error": "sql: no rows in result set"}
+2025-02-26T17:12:47.204+0800	error	mysql.GetPostByID error	{"error": "sql: no rows in result set"}
+2025-02-26T17:12:47.204+0800	error	service.GetPost error	{"error": "sql: no rows in result set"}
+2025-02-26T17:13:53.936+0800	error	cli.HGet error	{"error": "redis: nil"}
+2025-02-26T17:14:18.163+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-26T17:14:18.163+0800	info	shut down succes
+bye~
+2025-02-26T19:52:32.674+0800	error	db.Select error	{"error": "missing destination name postID in *[]*models.PostPreview"}
+2025-02-26T19:53:54.740+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-26T19:53:54.743+0800	info	shut down succes
+bye~
+2025-02-26T19:54:05.099+0800	error	db.Select error	{"error": "missing destination name postID in *[]*models.PostPreview"}
+2025-02-26T19:54:05.100+0800	error	service.GetPosts error	{"error": "missing destination name postID in *[]*models.PostPreview"}
+2025-02-26T19:54:35.882+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-26T19:54:35.882+0800	info	shut down succes
+bye~
+2025-02-26T19:57:07.827+0800	error	db.Select error	{"error": "missing destination name authorUID in *[]*models.PostPreview"}
+2025-02-26T19:57:07.827+0800	error	service.GetPosts error	{"error": "missing destination name authorUID in *[]*models.PostPreview"}
+2025-02-26T19:57:47.734+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-26T19:57:47.734+0800	info	shut down succes
+bye~
+2025-02-26T19:59:53.089+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-26T19:59:53.089+0800	info	shut down succes
+bye~
