@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hobbyGG/RestfulAPI_forum/contants/code"
+	"github.com/hobbyGG/RestfulAPI_forum/contants/contant"
 	"github.com/hobbyGG/RestfulAPI_forum/contants/errors"
 	"github.com/hobbyGG/RestfulAPI_forum/controllers"
 	"github.com/hobbyGG/RestfulAPI_forum/dao/redis"
@@ -72,7 +73,7 @@ func JWTAuth(ctx *gin.Context) {
 	}
 	for _, redisToken := range redisTokens {
 		if redisToken == token {
-			ctx.Set("uid", uid)
+			ctx.Set(contant.StrUID, uid)
 			ctx.Set("username", cliams.UserName)
 			ctx.Set("token", token)
 

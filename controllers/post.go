@@ -35,7 +35,7 @@ func CreatePostHandler(ctx *gin.Context) {
 		return
 	}
 
-	RespSuccess(ctx, postID)
+	ResponseSuccess(ctx, postID)
 }
 
 func GetPostHander(ctx *gin.Context) {
@@ -55,7 +55,7 @@ func GetPostHander(ctx *gin.Context) {
 		ResponseError(ctx, code.ServeBusy)
 		return
 	}
-	RespSuccess(ctx, post)
+	ResponseSuccess(ctx, post)
 }
 
 func GetPostsHander(ctx *gin.Context) {
@@ -82,5 +82,26 @@ func GetPostsHander(ctx *gin.Context) {
 		return
 	}
 
-	RespSuccess(ctx, posts)
+	ResponseSuccess(ctx, posts)
+}
+
+func PostVoteHandler(ctx *gin.Context) {
+	// 处理参数
+	voteParam := new(models.ParamVote)
+	if err := ctx.ShouldBindJSON(voteParam); err != nil {
+		zap.L().Error("ctx.ShouldBindJSON error", zap.Error(err))
+		ResponseError(ctx, code.InvalidParam)
+		return
+	}
+	pid := voteParam.PostID
+	vote := voteParam.Vote
+	uid := ctx.GetString(contant.StrUID)
+
+	if err := service.PostVote(pid, uid, vote); err != nil {
+		zap.L().Error("service.PostVote error", zap.Error(err))
+		ResponseError(ctx, code.ServeBusy)
+		return
+	}
+
+	ResponseSuccess(ctx, nil)
 }

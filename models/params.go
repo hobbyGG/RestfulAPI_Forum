@@ -17,3 +17,8 @@ type ParamCreatePost struct {
 	Title   string `json:"title" binding:"required" db:"title"`
 	Content string `json:"content" binding:"required" db:"content"`
 }
+
+type ParamVote struct {
+	PostID int64 `json:"postID"`
+	Vote   int16 `json:"vote" binding:"oneof= -1 0 1"`
+}

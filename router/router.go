@@ -18,6 +18,7 @@ func Init() *gin.Engine {
 		
 		api.POST("/logout", controllers.LogoutHandler)
 		api.POST("/post", controllers.CreatePostHandler)
+		api.POST("/vote", controllers.PostVoteHandler)
 
 		api.GET("/post/:id", controllers.GetPostHander)
 		api.GET("/posts", controllers.GetPostsHander)

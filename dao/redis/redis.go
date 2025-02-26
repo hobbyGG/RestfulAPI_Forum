@@ -13,6 +13,9 @@ const (
 	KeyUserTokenSetSuffix = ":token"
 
 	KeyPostInfoHset = "rforum:post:info"
+
+	KeyPostVoteZsetPrefix = "rforum:post:"
+	KeyPostVoteZsetSuffix = ":vote"
 )
 
 var cli *redis.Client

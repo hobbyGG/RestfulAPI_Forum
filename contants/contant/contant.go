@@ -10,4 +10,6 @@ const (
 
 	SortedTime  = "time"
 	SortedScore = "score"
+
+	StrUID = "uid"
 )

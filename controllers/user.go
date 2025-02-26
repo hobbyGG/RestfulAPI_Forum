@@ -27,7 +27,7 @@ func SignUpHandler(ctx *gin.Context) {
 	}
 	fmt.Printf("%v", user)
 
-	RespSuccess(ctx, nil)
+	ResponseSuccess(ctx, nil)
 }
 
 func LoginHandler(ctx *gin.Context) {
@@ -54,7 +54,7 @@ func LoginHandler(ctx *gin.Context) {
 		return
 	}
 
-	RespSuccess(ctx, token)
+	ResponseSuccess(ctx, token)
 }
 
 func LogoutHandler(ctx *gin.Context) {
@@ -67,5 +67,5 @@ func LogoutHandler(ctx *gin.Context) {
 		ResponseError(ctx, code.ServeBusy)
 		return
 	}
-	RespSuccess(ctx, nil)
+	ResponseSuccess(ctx, nil)
 }

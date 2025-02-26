@@ -16,5 +16,6 @@ var (
 	ErrTokenExpired   = errors.New("用户token已过期")
 	ErrNeedPID        = errors.New("需要帖子的id")
 
-	ErrRedisNil = redis.Nil
+	ErrRedisNil   = redis.Nil
+	ErrRedisNoKey = errors.New("key不存在")
 )

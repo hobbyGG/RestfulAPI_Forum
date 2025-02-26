@@ -79,6 +79,33 @@ func GetPost(pidStr string) (*models.Post, error) {
 
 // GetPosts 查询某一页指定数量的帖子，并按一定排序返回
 func GetPosts(page, size int, sorted string) ([]*models.PostPreview, error) {
-
 	return mysql.GetPosts(page, size, sorted)
 }
+
+func PostVote(pid int64, uid int64, vote int16) error {
+	// 处理用户投票的情况有
+	// 0 	->  1/-1
+	// 1/-1 -> -1/1
+	voted, err := redis.GetVote(pid, uid)
+	if err != nil {
+		if err == errors.ErrRedisNil {
+			// 用户还没投过票或者帖子还没投过票
+			err = redis.Vote(pid, uid, vote)
+			return err
+		}
+		zap.L().Error("redis.GetVote error", zap.Error(err))
+		return err
+	}
+
+	newVote := voted - vote
+	if err := redis.Vote(pid, uid, newVote); err != nil {
+		zap.L().Error("redis.Vote error", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
+// vote情况在redis的zset中维护
+// zset表名为post的id，成员为投票的用户
+// 如果vote的帖子不在redis中再从mysql读入

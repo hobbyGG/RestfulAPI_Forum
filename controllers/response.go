@@ -13,7 +13,7 @@ type ResponseParam struct {
 	Data interface{} `json:"data"`
 }
 
-func RespSuccess(ctx *gin.Context, data interface{}) {
+func ResponseSuccess(ctx *gin.Context, data interface{}) {
 	resp := &ResponseParam{
 		Msg:  code.Success.Msg(),
 		Code: code.Success,
