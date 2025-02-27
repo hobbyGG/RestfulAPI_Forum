@@ -77,3 +77,23 @@ func GetPosts(page, size int, sorted string) ([]*models.PostPreview, error) {
 	}
 	return posts, nil
 }
+
+func GetPostScore(pid int64) (int64, error) {
+	sqlStr := `select score from post where postID = ?`
+	score := new(int64)
+	if err := db.Get(score, sqlStr, pid); err != nil {
+		zap.L().Error("db.Get error", zap.Error(err))
+		return 0, err
+	}
+
+	return *score, nil
+}
+
+func SetPostScore(pid, score int64) error {
+	sqlStr := `update post set score = ? where postID = ?`
+	if _, err := db.Exec(sqlStr, score, pid); err != nil {
+		zap.L().Error("db.Exec error", zap.Error(err))
+		return err
+	}
+	return nil
+}

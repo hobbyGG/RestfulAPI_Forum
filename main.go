@@ -14,6 +14,7 @@ import (
 	"github.com/hobbyGG/RestfulAPI_forum/dao/mysql"
 	"github.com/hobbyGG/RestfulAPI_forum/dao/redis"
 	"github.com/hobbyGG/RestfulAPI_forum/log"
+	dbsync "github.com/hobbyGG/RestfulAPI_forum/packages/dbSync"
 	"github.com/hobbyGG/RestfulAPI_forum/packages/snowflake"
 	"github.com/hobbyGG/RestfulAPI_forum/router"
 	"github.com/hobbyGG/RestfulAPI_forum/settings"
@@ -54,7 +55,7 @@ func main() {
 		zap.L().Error("redis.Init", zap.Error(err))
 		return
 	}
-	
+
 	// 初始化packages
 	if err := snowflake.Init(time.Now().Format("2006-01-02"), 1); err != nil {
 		zap.L().Error("snowflake.Init error", zap.Error(err))
@@ -73,10 +74,28 @@ func main() {
 		}
 	}()
 
+	// 定时刷新mysql分数
+	ticker := time.NewTicker(time.Minute)
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				if err := dbsync.Score(); err != nil {
+					zap.L().Error("dbsync.Score error", zap.Error(err))
+					continue
+				}
+			case <-done:
+				return
+			}
+		}
+	}()
+
 	// 平滑重启
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+	done <- true
 	ctx, cancel := context.WithTimeout(context.Background(), shoutDowmTime)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {

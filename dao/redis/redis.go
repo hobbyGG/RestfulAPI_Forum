@@ -36,4 +36,20 @@ func Init(cfg *settings.RedisCfg) error {
 	return nil
 }
 
-// uid token
+func GetKeys(pattern string) ([]string, error) {
+	var keys []string
+	var cursor uint64
+	for {
+		ks, c, err := cli.Scan(cursor, pattern, 100).Result()
+		if err != nil {
+			zap.L().Error("cli.Scan error", zap.Error(err))
+			return nil, err
+		}
+		keys = append(keys, ks...)
+		cursor = c
+		if cursor == 0 {
+			break
+		}
+	}
+	return keys, nil
+}

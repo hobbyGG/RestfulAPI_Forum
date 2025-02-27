@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/go-redis/redis"
-	"github.com/hobbyGG/RestfulAPI_forum/contants/errors"
+	"github.com/hobbyGG/RestfulAPI_forum/contants/contant"
 	"github.com/hobbyGG/RestfulAPI_forum/models"
 	"go.uber.org/zap"
 )
@@ -57,4 +57,21 @@ func Vote(pid, uid int64, vote int16) error {
 func GetPostVoteKey(pid int64) string {
 	pidStr := strconv.Itoa(int(pid))
 	return KeyPostVoteZsetPrefix + pidStr + KeyPostVoteZsetSuffix
+}
+
+func GetPostScore(pid int64) (int64, error) {
+	key := GetPostVoteKey(pid)
+	mems, err := cli.ZRangeWithScores(key, 0, -1).Result()
+	if err != nil {
+		zap.L().Error("cli.ZRangeWithScores error", zap.Error(err))
+		return 0, err
+	}
+
+	// 计算分数
+	var score int64 = 0
+	for _, mem := range mems {
+		score += int64(mem.Score)
+	}
+	score *= contant.VoteScore
+	return score, nil
 }

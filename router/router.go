@@ -15,7 +15,7 @@ func Init() *gin.Engine {
 		api.POST("/login", controllers.LoginHandler)
 
 		api.Use(middleware.JWTAuth)
-		
+
 		api.POST("/logout", controllers.LogoutHandler)
 		api.POST("/post", controllers.CreatePostHandler)
 		api.POST("/vote", controllers.PostVoteHandler)

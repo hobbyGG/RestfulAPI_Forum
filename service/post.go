@@ -86,26 +86,53 @@ func PostVote(pid int64, uid int64, vote int16) error {
 	// 处理用户投票的情况有
 	// 0 	->  1/-1
 	// 1/-1 -> -1/1
+	defer SyncScoreToMysql(pid)
 	voted, err := redis.GetVote(pid, uid)
 	if err != nil {
-		if err == errors.ErrRedisNil {
-			// 用户还没投过票或者帖子还没投过票
-			err = redis.Vote(pid, uid, vote)
+		if err != errors.ErrRedisNil {
+			zap.L().Error("redis.GetVote error", zap.Error(err))
 			return err
 		}
-		zap.L().Error("redis.GetVote error", zap.Error(err))
-		return err
+		// 用户没有给该post投过票或者帖子没人投票
+		if err := redis.Vote(pid, uid, vote); err != nil {
+			zap.L().Error("redis.Vote error", zap.Error(err))
+			return err
+		}
+		zap.L().Info("info", zap.String("PostVote", "create postVote table id:"+strconv.Itoa(int(pid))))
+		return nil
 	}
 
-	newVote := voted - vote
-	if err := redis.Vote(pid, uid, newVote); err != nil {
-		zap.L().Error("redis.Vote error", zap.Error(err))
-		return err
+	// 用户重复投票则直接跳过
+	if voted != vote {
+		if err := redis.Vote(pid, uid, vote); err != nil {
+			zap.L().Error("redis.Vote error", zap.Error(err))
+			return err
+		}
+		//
 	}
 
 	return nil
 }
 
-// vote情况在redis的zset中维护
-// zset表名为post的id，成员为投票的用户
-// 如果vote的帖子不在redis中再从mysql读入
+func SyncScoreToMysql(pid int64) error {
+	// 根据pid查看对应redis的投票情况
+	// 计算投票结果，存入mysql
+	votedScore, err := redis.GetPostScore(pid)
+	if err != nil {
+		zap.L().Error("redis.GetPostScore error", zap.Error(err))
+		return err
+	}
+
+	mysqlScore, err := mysql.GetPostScore(pid)
+	if err != nil {
+		zap.L().Error("mysql.GetPostScore error", zap.Error(err))
+		return err
+	}
+
+	newScore := mysqlScore + votedScore
+	if err := mysql.SetPostScore(pid, newScore); err != nil {
+		zap.L().Error("mysql.SetPostScore error", zap.Error(err))
+		return err
+	}
+	return nil
+}

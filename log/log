@@ -128,3 +128,27 @@ bye~
 2025-02-26T19:59:53.089+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
 2025-02-26T19:59:53.089+0800	info	shut down succes
 bye~
+2025-02-27T14:47:22.845+0800	error	ctx.ShouldBindJSON error	{"error": "json: cannot unmarshal string into Go struct field ParamVote.postID of type int64"}
+2025-02-27T14:48:16.546+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-27T14:48:16.546+0800	info	shut down succes
+bye~
+2025-02-27T14:52:55.739+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-27T14:52:55.740+0800	info	shut down succes
+bye~
+2025-02-27T14:55:26.006+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-27T14:55:26.006+0800	info	shut down succes
+bye~
+2025-02-27T15:01:24.944+0800	info	user 180268711284736 login num over 3
+2025-02-27T15:43:42.333+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-27T15:43:42.333+0800	info	shut down succes
+bye~
+2025-02-27T15:44:24.459+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-27T15:44:24.459+0800	info	shut down succes
+bye~
+2025-02-27T16:29:01.434+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-27T16:29:01.434+0800	info	shut down succes
+bye~
+2025-02-27T16:30:08.623+0800	info	info	{"PostVote": "create postVote table id:178430473670656"}
+2025-02-27T16:31:40.844+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-02-27T16:31:40.844+0800	info	shut down succes
+bye~

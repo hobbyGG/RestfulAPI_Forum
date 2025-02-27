@@ -12,4 +12,6 @@ const (
 	SortedScore = "score"
 
 	StrUID = "uid"
+
+	VoteScore = 100000 //每3天结算一次热门，需要1000票保持热度 ->260 为了测试方便改为100000
 )

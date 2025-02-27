@@ -19,6 +19,6 @@ type ParamCreatePost struct {
 }
 
 type ParamVote struct {
-	PostID int64 `json:"postID"`
+	PostID int64 `json:"postID,string"`
 	Vote   int16 `json:"vote" binding:"oneof= -1 0 1"`
 }

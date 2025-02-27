@@ -95,7 +95,7 @@ func PostVoteHandler(ctx *gin.Context) {
 	}
 	pid := voteParam.PostID
 	vote := voteParam.Vote
-	uid := ctx.GetString(contant.StrUID)
+	uid := ctx.GetInt64(contant.StrUID)
 
 	if err := service.PostVote(pid, uid, vote); err != nil {
 		zap.L().Error("service.PostVote error", zap.Error(err))
