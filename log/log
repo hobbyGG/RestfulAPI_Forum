@@ -152,3 +152,10 @@ bye~
 2025-02-27T16:31:40.844+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
 2025-02-27T16:31:40.844+0800	info	shut down succes
 bye~
+2025-03-01T11:57:24.814+0800	error	cli.Ping() error	{"error": "dial tcp [::1]:6379: connectex: No connection could be made because the target machine actively refused it."}
+2025-03-01T11:57:24.950+0800	error	redis.Init	{"error": "dial tcp [::1]:6379: connectex: No connection could be made because the target machine actively refused it."}
+2025-03-01T11:59:26.931+0800	error	cli.Ping() error	{"error": "dial tcp [::1]:6379: connectex: No connection could be made because the target machine actively refused it."}
+2025-03-01T11:59:26.949+0800	error	redis.Init	{"error": "dial tcp [::1]:6379: connectex: No connection could be made because the target machine actively refused it."}
+2025-03-01T12:00:59.307+0800	fatal	ListenAndServe error	{"error": "http: Server closed"}
+2025-03-01T12:00:59.307+0800	info	shut down succes
+bye~
