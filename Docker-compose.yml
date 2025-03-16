@@ -1,0 +1,62 @@
+services:
+  rforum-server:
+    build: ./
+    ports:
+      - 8888:8888
+    networks:
+      - rfNet
+    depends_on:
+      rforum-db:
+        condition: service_healthy
+      rforum-rdb:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888" ]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    # command: ["./rforum", "-f", "./settings"]
+  rforum-db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=123
+      - MYSQL_DATABASE=rforum
+    ports:
+      - 13306:3306
+    networks:
+      - rfNet
+    volumes:
+      - mysql-db:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD" ]
+      # 增大检查间隔
+      interval: 30s
+      # 增大超时时间
+      timeout: 90s
+      retries: 5
+      # 适当增大启动周期
+      start_period: 90s
+  rforum-rdb:
+    image: redis:7.4.2
+    environment:
+      - REDIS_PORT=6379
+    ports:
+      - 16379:6379
+    networks:
+      - rfNet
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-h", "localhost", "-p", "6379", "ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+networks:
+  rfNet:
+
+
+volumes:
+  mysql-db:
+
+

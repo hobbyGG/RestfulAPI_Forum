@@ -7,6 +7,9 @@ import (
 )
 
 var (
+	ErrFuncType = errors.New("初始化函数错误")
+	ErrCfgType  = errors.New("配置类型错误")
+
 	ErrUserNotExisted = errors.New("用户不存在")
 	ErrPwd            = errors.New("用户名或密码错误")
 	ErrNotLogin       = errors.New("用户未登录")

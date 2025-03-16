@@ -20,6 +20,8 @@ const (
 
 var cli *redis.Client
 
+type InitFuncType func(*settings.RedisCfg) error
+
 func Init(cfg *settings.RedisCfg) error {
 	addr := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
 	cli = redis.NewClient(&redis.Options{

@@ -12,6 +12,8 @@ import (
 
 var db *sqlx.DB
 
+type InitFuncType func(*settings.MysqlCfg) error
+
 func Init(cfg *settings.MysqlCfg) error {
 	// 使用sqlx的connect连接数据库，connect是open和ping的集成
 	userName := cfg.UserName
