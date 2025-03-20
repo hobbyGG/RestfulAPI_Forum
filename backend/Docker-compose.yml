@@ -2,7 +2,7 @@ services:
   rforum-server:
     build: ./
     ports:
-      - 8888:8888
+      - "8888:8888"
     networks:
       - rfNet
     depends_on:
@@ -18,7 +18,7 @@ services:
       start_period: 30s
     # command: ["./rforum", "-f", "./settings"]
   rforum-db:
-    image: mysql:8.0
+    image: mysql:9.1
     environment:
       - MYSQL_ROOT_PASSWORD=123
       - MYSQL_DATABASE=rforum
@@ -28,6 +28,7 @@ services:
       - rfNet
     volumes:
       - mysql-db:/var/lib/mysql
+      - ./dao/mysql/initSql:/docker-entrypoint-initdb.d
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD" ]
       # 增大检查间隔
@@ -54,9 +55,7 @@ services:
 
 networks:
   rfNet:
-
+    driver: bridge
 
 volumes:
   mysql-db:
-
-
