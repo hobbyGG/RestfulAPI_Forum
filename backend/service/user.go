@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/hobbyGG/RestfulAPI_forum/contants/contant"
+	"github.com/hobbyGG/RestfulAPI_forum/contants/errors"
 	"github.com/hobbyGG/RestfulAPI_forum/dao/mysql"
 	"github.com/hobbyGG/RestfulAPI_forum/dao/redis"
 	"github.com/hobbyGG/RestfulAPI_forum/models"
@@ -14,6 +15,13 @@ import (
 )
 
 func SignUp(user *models.ParamSignUp) error {
+	// 检查用户是否存在
+	if exist, err := mysql.IsUserExisted(user.Email); err != nil {
+		zap.L().Error("mysql.IsUserExisted", zap.Error(err))
+		return err
+	} else if exist {
+		return errors.ErrUserEmailExisted
+	}
 	// 新建用户
 	uid, err := snowflake.GetID()
 	if err != nil {
@@ -53,6 +61,11 @@ func Login(loginParam *models.ParamLogin) (string, error) {
 		}
 	}
 	return "", ErrPwd
+}
+
+func GetUsername(uid int64) (string, error) {
+	u, _ := mysql.GetUserByID(uid)
+	return u.UserName, nil
 }
 
 func LoginLimit(token string) error {

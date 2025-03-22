@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hobbyGG/RestfulAPI_forum/contants/code"
+	"github.com/hobbyGG/RestfulAPI_forum/contants/errors"
 	"github.com/hobbyGG/RestfulAPI_forum/models"
 	"github.com/hobbyGG/RestfulAPI_forum/service"
 	"go.uber.org/zap"
@@ -21,6 +22,11 @@ func SignUpHandler(ctx *gin.Context) {
 
 	// 注册服务
 	if err := service.SignUp(&user); err != nil {
+		if err == errors.ErrUserEmailExisted {
+			// 邮箱被占用
+			ResponseError(ctx, code.EmialExisted)
+			return
+		}
 		zap.L().Error("service.SignUp error", zap.Error(err))
 		ResponseError(ctx, code.ServeBusy)
 		return

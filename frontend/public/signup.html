@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册</title>
+    <!-- 引入 Vue 2 库 -->
+    <script src="vue.js"></script>
+    <style>
+        .signup-page {
+            background-color: #e6f7ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .signup-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .signup-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p.error-message {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Vue 应用挂载点 -->
+    <div id="app">
+        <div class="signup-page">
+            <div class="signup-container">
+                <h2>注册</h2>
+                <!-- 为表单添加提交事件 -->
+                <form @submit.prevent="signup">
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <!-- 绑定用户名输入框到 Vue 实例的数据 -->
+                        <input type="text" id="username" v-model="userName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <!-- 绑定密码输入框到 Vue 实例的数据 -->
+                        <input type="password" id="password" v-model="pwd" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="re-password">确认密码</label>
+                        <!-- 绑定确认密码输入框到 Vue 实例的数据 -->
+                        <input type="password" id="re-password" v-model="rePwd" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <!-- 绑定邮箱输入框到 Vue 实例的数据 -->
+                        <input type="email" id="email" v-model="email" required>
+                    </div>
+                    <button type="submit">注册</button>
+                </form>
+                <!-- 显示错误信息 -->
+                <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userName: '',
+                pwd: '',
+                rePwd: '',
+                email: '',
+                errorMessage: ''
+            },
+            methods: {
+                signup() {
+                    this.errorMessage = ''; // 清空之前的错误信息
+                    const data = {
+                        username: this.userName,
+                        pwd: this.pwd,
+                        re_pwd: this.rePwd,
+                        email: this.email
+                    };
+                    fetch('http://127.0.0.1:8888/api/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('网络响应异常');
+                            }
+                            return response.json();
+                        })
+                        .then(result => {
+                            if (result.code !== 0) {
+                                // 更新错误信息
+                                this.errorMessage = `注册失败: ${result.msg}`;
+                            } else {
+                                console.log('注册成功:', result.msg);
+                                // 注册成功暂时不处理
+                            }
+                        })
+                        .catch(error => {
+                            // 更新错误信息
+                            this.errorMessage = `注册失败: ${error.message}`;
+                        });
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

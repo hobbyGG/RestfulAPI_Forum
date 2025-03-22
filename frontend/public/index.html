@@ -4,137 +4,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录</title>
-    <!-- 引入 Vue 2 库 -->
-    <script src="vue.js"></script>
+    <title>首页</title>
     <style>
-        .login-page {
+        body {
             background-color: #e6f7ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
 
-        .login-container {
+        .navbar {
             background-color: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-
-        .login-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .button-group {
+            padding: 15px 30px;
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        button {
-            flex: 1;
-            padding: 10px;
+        .login-btn {
+            background-color: #e6f7ff;
             border: none;
-            border-radius: 4px;
-            background-color: #007bff;
-            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
+            text-decoration: none;
+            color: black;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .login-btn:hover {
+            background-color: #b3d9ff;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .hidden-window {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            right: 30px;
+            top: 50px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .hidden-window.show {
+            display: block;
+            opacity: 1;
         }
     </style>
 </head>
 
 <body>
-    <!-- Vue 应用挂载点 -->
-    <div id="app">
-        <div class="login-page">
-            <div class="login-container">
-                <h2>登录</h2>
-                <!-- 为表单添加提交事件 -->
-                <form @submit.prevent="login">
-                    <div class="form-group">
-                        <label for="username">用户名</label>
-                        <!-- 绑定用户名输入框到 Vue 实例的数据 -->
-                        <input type="text" id="username" v-model="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">密码</label>
-                        <!-- 绑定密码输入框到 Vue 实例的数据 -->
-                        <input type="password" id="password" v-model="password" required>
-                    </div>
-                    <div class="button-group">
-                        <button type="submit">登录</button>
-                        <button>注册</button>
-                    </div>
-                </form>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <!-- 这里可以添加网站 logo 或者其他导航项 -->
+        <div>论坛</div>
+        <div id="nav-right">
+            <!-- 登录按钮 -->
+            <a href="login.html" class="login-btn" id="login-link">登录</a>
+            <!-- 靠近隐藏窗口的按钮 -->
+            <button class="login-btn" id="profile-btn" style="display: none;"></button>
+            <!-- 隐藏窗口 -->
+            <div class="hidden-window" id="hidden-window">
+                <button class="login-btn" id="logout-btn">注销</button>
             </div>
         </div>
     </div>
-    <!-- 移除原有的 Vue 实例脚本 -->
+    <h1>欢迎访问论坛</h1>
+
     <script>
-        new Vue({
-            el: '#app',
-            data: {
-                // 新增用户名和密码数据项
-                username: '',
-                password: ''
-            },
-            methods: {
-                // 新增登录方法
-                login() {
-                    const data = {
-                        username: this.username,
-                        pwd: this.password
-                    };
-                    fetch('http://172.18.0.4:8888/api/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('网络响应异常');
-                            }
-                            return response.json();
-                        })
-                        .then(result => {
-                            console.log('登录成功:', result);
-                            // 这里可以添加登录成功后的逻辑，如跳转到其他页面
-                        })
-                        .catch(error => {
-                            console.error('登录失败:', error);
-                            // 这里可以添加登录失败后的提示逻辑
-                        });
+        // 获取 cookie 中的 token
+        function getTokenFromCookie() {
+            const name = 'token=';
+            const ca = document.cookie.split('; ');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
                 }
             }
-        });
+            return null;
+        }
+
+        // 验证 token
+        async function verifyToken(token) {
+            try {
+                const response = await fetch('http://127.0.0.1:8888/api/loginAuth', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                return { isValid: data.code === 0, userData: data.data };
+            } catch (error) {
+                console.error('验证 token 时出错:', error);
+                return { isValid: false, userData: null };
+            }
+        }
+
+        // 更新页面元素
+        function updateUI(isLoggedIn, userData) {
+            const loginLink = document.getElementById('login-link');
+            const profileBtn = document.getElementById('profile-btn');
+            const hiddenWindow = document.getElementById('hidden-window');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (isLoggedIn) {
+                loginLink.style.display = 'none';
+                profileBtn.style.display = 'inline-block';
+                // 将个人中心文字替换为接收来的 data
+                profileBtn.textContent = userData;
+
+                const showWindow = () => {
+                    hiddenWindow.classList.add('show');
+                };
+
+                const hideWindow = () => {
+                    hiddenWindow.classList.remove('show');
+                };
+
+                // 鼠标悬停到按钮显示隐藏窗口
+                profileBtn.addEventListener('mouseenter', showWindow);
+                // 鼠标移出按钮隐藏隐藏窗口
+                profileBtn.addEventListener('mouseleave', () => {
+                    if (!isMouseInWindow()) {
+                        hideWindow();
+                    }
+                });
+
+                // 鼠标悬停到悬浮框保持显示
+                hiddenWindow.addEventListener('mouseenter', showWindow);
+                // 鼠标移出悬浮框隐藏
+                hiddenWindow.addEventListener('mouseleave', hideWindow);
+
+                // 点击注销按钮携带 token 访问 /api/logout 接口，随后刷新页面
+                logoutBtn.addEventListener('click', async () => {
+                    const token = getTokenFromCookie();
+                    if (token) {
+                        try {
+                            await fetch('http://127.0.0.1:8888/api/logout', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            });
+                        } catch (error) {
+                            console.error('注销请求出错:', error);
+                        }
+                    }
+                    // 清除 cookie 中的 token
+                    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    // 刷新页面
+                    window.location.reload();
+                });
+            } else {
+                loginLink.style.display = 'inline-block';
+                profileBtn.style.display = 'none';
+                hiddenWindow.style.display = 'none';
+            }
+        }
+
+        // 判断鼠标是否在悬浮框内
+        function isMouseInWindow() {
+            const hiddenWindow = document.getElementById('hidden-window');
+            const rect = hiddenWindow.getBoundingClientRect();
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            return (
+                mouseX >= rect.left &&
+                mouseX <= rect.right &&
+                mouseY >= rect.top &&
+                mouseY <= rect.bottom
+            );
+        }
+
+        // 页面加载时检查登录状态
+        async function checkLoginStatus() {
+            const token = getTokenFromCookie();
+            if (token) {
+                const { isValid, userData } = await verifyToken(token);
+                updateUI(isValid, userData);
+            } else {
+                updateUI(false, null);
+            }
+        }
+
+        window.addEventListener('load', checkLoginStatus);
     </script>
 </body>
 

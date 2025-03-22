@@ -21,6 +21,16 @@ func AddUser(newUser *models.User) error {
 	return nil
 }
 
+func IsUserExisted(email string) (bool, error) {
+	sqlStr := `select exists (select email from user where email=?)`
+	var existed bool
+	if err := db.QueryRow(sqlStr, email).Scan(&existed); err != nil {
+		zap.L().Error("db.QueryRow", zap.Error(err))
+		return false, err
+	}
+	return existed, nil
+}
+
 func GetUserByID(id int64) (*models.User, error) {
 	sqlStr := `
 	select user_id, username, password, email from user where user_id=?`

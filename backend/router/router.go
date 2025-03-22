@@ -6,8 +6,10 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/hobbyGG/RestfulAPI_forum/contants/contant"
 	"github.com/hobbyGG/RestfulAPI_forum/controllers"
 	"github.com/hobbyGG/RestfulAPI_forum/middleware"
+	"github.com/hobbyGG/RestfulAPI_forum/service"
 )
 
 func Init() *gin.Engine {
@@ -40,7 +42,8 @@ func Init() *gin.Engine {
 		// 设置预检请求的缓存时间
 		ctx.Header("Access-Control-Max-Age", "43200") // 缓存 12 小时
 		// 返回 204 状态码
-		ctx.Status(http.StatusNoContent)
+		ctx.Status(http.StatusOK)
+
 	})
 
 	api := r.Group("/api", middleware.RateLimit(time.Second*2, 5))
@@ -59,6 +62,7 @@ func Init() *gin.Engine {
 		api.GET("/posts", controllers.GetPostsHander)
 
 		api.GET("/ping", pingHandler)
+		api.POST("/loginAuth", loginAuthHandler)
 	}
 
 	return r
@@ -66,4 +70,10 @@ func Init() *gin.Engine {
 
 func pingHandler(ctx *gin.Context) {
 	ctx.String(http.StatusOK, "pong")
+}
+
+func loginAuthHandler(ctx *gin.Context) {
+	uid := ctx.GetInt64(contant.StrUID)
+	username, _ := service.GetUsername(uid)
+	controllers.ResponseSuccess(ctx, username)
 }

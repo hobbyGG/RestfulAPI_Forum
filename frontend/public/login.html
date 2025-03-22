@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <!-- 引入 Vue 2 库 -->
+    <script src="vue.js"></script>
+    <style>
+        .login-page {
+            background-color: #e6f7ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Vue 应用挂载点 -->
+    <div id="app">
+        <div class="login-page">
+            <div class="login-container">
+                <h2>登录</h2>
+                <!-- 为表单添加提交事件 -->
+                <form @submit.prevent="login">
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <!-- 绑定用户名输入框到 Vue 实例的数据 -->
+                        <input type="text" id="username" v-model="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <!-- 绑定密码输入框到 Vue 实例的数据 -->
+                        <input type="password" id="password" v-model="password" required>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit">登录</button>
+                        <!-- 为注册按钮添加点击跳转事件 -->
+                        <button @click="goToSignUp">注册</button>
+                    </div>
+                </form>
+                <!-- 新增显示错误信息的元素 -->
+                <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                username: '',
+                password: '',
+                errorMessage: ''
+            },
+            methods: {
+                login() {
+                    this.errorMessage = '';
+                    const data = {
+                        username: this.username,
+                        pwd: this.password
+                    };
+                    fetch('http://127.0.0.1:8888/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('网络响应异常');
+                            }
+                            return response.json();
+                        })
+                        .then(result => {
+                            if (result.code !== 0) {
+                                this.errorMessage = `登录失败: ${result.msg}`;
+                            } else {
+                                console.log('登录成功:', result.msg);
+                                // 保存 token 到 cookie
+                                const token = result.data;
+                                document.cookie = `token=${token}; path=/`;
+                                // 跳转回 index 页面
+                                window.location.href = 'index.html';
+                            }
+                        })
+                        .catch(error => {
+                            this.errorMessage = `登录失败: ${error.message}`;
+                        });
+                },
+                // 跳转注册页面的方法
+                goToSignUp() {
+                    window.location.href = 'signup.html';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
