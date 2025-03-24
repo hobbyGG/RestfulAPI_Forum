@@ -15,11 +15,12 @@ type Post struct {
 }
 
 type PostPreview struct {
-	Title      string `json:"title" db:"title"`
-	AuthorName string `json:"authorName" db:"username"`
-	Content    string `json:"content" db:"content"`
-	PostID     int64  `json:"postID" db:"postID"`
-	Score      int64  `json:"score" db:"score"`
-	CommID     int16  `json:"commID" db:"commID"`
-	Status     int16  `json:"status" db:"status"`
+	Title      string    `json:"title,omitempty" db:"title"`
+	AuthorName string    `json:"authorName,omitempty" db:"username"`
+	Content    string    `json:"content,omitempty" db:"content"`
+	PostID     int64     `json:"postID,omitempty" db:"postID"`
+	Score      int64     `json:"score,omitempty" db:"score"`
+	CommID     int16     `json:"commID,omitempty" db:"commID"`
+	Status     int16     `json:"status,omitempty" db:"status"`
+	CreateTime time.Time `json:"createTime,omitempty" db:"create_time"`
 }

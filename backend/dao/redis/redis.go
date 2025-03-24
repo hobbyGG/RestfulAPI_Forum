@@ -9,13 +9,19 @@ import (
 )
 
 const (
+	// 以登录的用户列表
 	KeyUserTokenSetPrefix = "rforum:user:"
 	KeyUserTokenSetSuffix = ":token"
 
+	// 帖子信息
 	KeyPostInfoHset = "rforum:post:info"
 
+	// 每个帖子的投票情况
 	KeyPostVoteZsetPrefix = "rforum:post:"
 	KeyPostVoteZsetSuffix = ":vote"
+
+	// 帖子排行
+	KeyPostRankZset = "rforum:post:rank"
 )
 
 var cli *redis.Client
@@ -36,6 +42,17 @@ func Init(cfg *settings.RedisCfg) error {
 		return err
 	}
 	return nil
+}
+
+func Close() {
+	if err := cli.Save().Err(); err != nil {
+		zap.L().Error("cli.Save() error", zap.Error(err))
+		// 持久化失败，应该启用其他保存方案，比如存入mysql
+		return
+	}
+	if err := cli.Close(); err != nil {
+		zap.L().Error("cli.Close error", zap.Error(err))
+	}
 }
 
 func GetKeys(pattern string) ([]string, error) {

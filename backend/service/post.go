@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/hobbyGG/RestfulAPI_forum/contants/contant"
 	"github.com/hobbyGG/RestfulAPI_forum/contants/errors"
 	"github.com/hobbyGG/RestfulAPI_forum/dao/mysql"
 	"github.com/hobbyGG/RestfulAPI_forum/dao/redis"
@@ -29,6 +30,25 @@ func CreatePost(postParam *models.ParamCreatePost, uid int64) (int64, error) {
 		Score:           score,
 		Status:          defauleStatus,
 		ParamCreatePost: *postParam,
+	}
+
+	// 以下应该使用事务操作
+	// 将数据存入redis
+	if err := redis.UpdatePostRank(post.PostID, post.Score); err != nil {
+		zap.L().Error("redis.UpdatePostRank error", zap.Error(err))
+		return -2, err
+	}
+
+	postInfoStr, err := json.Marshal(post)
+	if err != nil {
+		zap.L().Error("json.Marshal error", zap.Error(err))
+		return -2, err
+	}
+
+	pidStr := strconv.Itoa(int(postID))
+	if err := redis.AddPostInfo(pidStr, string(postInfoStr)); err != nil {
+		zap.L().Error("redis.AddPost error", zap.Error(err))
+		return -2, err
 	}
 
 	// 将数据存入mysql
@@ -69,7 +89,7 @@ func GetPost(pidStr string) (*models.Post, error) {
 			zap.L().Error("json.Marshal error", zap.Error(err))
 			return nil, err
 		}
-		if err := redis.AddPost(pidStr, string(postInfoStr)); err != nil {
+		if err := redis.AddPostInfo(pidStr, string(postInfoStr)); err != nil {
 			zap.L().Error("redis.AddPost error", zap.Error(err))
 			return nil, err
 		}
@@ -79,37 +99,33 @@ func GetPost(pidStr string) (*models.Post, error) {
 
 // GetPosts 查询某一页指定数量的帖子，并按一定排序返回
 func GetPosts(page, size int, sorted string) ([]*models.PostPreview, error) {
-	return mysql.GetPosts(page, size, sorted)
+	// 判断需要的排行方式
+	if sorted == contant.SortedTime {
+		return mysql.GetPosts(page, size)
+	} else if sorted == contant.SortedScore {
+		return redis.GetPosts(page, size)
+	}
+	return nil, errors.ErrRedisNoKey
 }
 
 func PostVote(pid int64, uid int64, vote int16) error {
-	// 处理用户投票的情况有
-	// 0 	->  1/-1
-	// 1/-1 -> -1/1
+	// 直接根据投票结果进行修改
 	defer SyncScoreToMysql(pid)
-	voted, err := redis.GetVote(pid, uid)
-	if err != nil {
-		if err != errors.ErrRedisNil {
-			zap.L().Error("redis.GetVote error", zap.Error(err))
-			return err
-		}
-		// 用户没有给该post投过票或者帖子没人投票
-		if err := redis.Vote(pid, uid, vote); err != nil {
-			zap.L().Error("redis.Vote error", zap.Error(err))
-			return err
-		}
-		zap.L().Info("info", zap.String("PostVote", "create postVote table id:"+strconv.Itoa(int(pid))))
-		return nil
+	// 先在PostVot修改该用户投票情况
+	if vote != 1 && vote != 0 {
+		return errors.ErrInvalidParam
+	} else if vote == 1 {
+		// 直接进行修改
+		return redis.Vote(pid, uid, vote)
+	} else if vote == 0 {
+		return redis.RmVote(pid, uid)
 	}
 
-	// 用户重复投票则直接跳过
-	if voted != vote {
-		if err := redis.Vote(pid, uid, vote); err != nil {
-			zap.L().Error("redis.Vote error", zap.Error(err))
-			return err
-		}
-		//
-	}
+	// 计算新的得分
+	score, _ := redis.GetPostScore(pid)
+
+	// 更新postRank表
+	redis.UpdatePostRank(pid, score)
 
 	return nil
 }

@@ -62,11 +62,11 @@ func GetPostsHander(ctx *gin.Context) {
 	// 解析query参数
 	pageStr, ok := ctx.GetQuery(contant.KeyPageStr)
 	if !ok {
-		pageStr = "1"
+		pageStr = "0"
 	}
 	sizeStr, ok := ctx.GetQuery(contant.KeySizeStr)
 	if !ok {
-		sizeStr = "5"
+		sizeStr = "10"
 	}
 	sorted, ok := ctx.GetQuery(contant.KeySortedStr)
 	if !ok {

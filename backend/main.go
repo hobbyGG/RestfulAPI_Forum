@@ -53,6 +53,7 @@ func main() {
 		zap.L().Error("mysql init error", zap.Error(err))
 		return
 	}
+	defer mysql.Close()
 
 	// 初始化redis
 	var redisInitWrap redisInitFunc = redis.Init
@@ -60,6 +61,7 @@ func main() {
 		zap.L().Error("redis init error", zap.Error(err))
 		return
 	}
+	defer redis.Close()
 
 	// 初始化packages
 	if err := snowflake.Init(time.Now().Format("2006-01-02"), 1); err != nil {

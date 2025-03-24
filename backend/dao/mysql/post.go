@@ -1,7 +1,6 @@
 package mysql
 
 import (
-	"github.com/hobbyGG/RestfulAPI_forum/contants/contant"
 	"github.com/hobbyGG/RestfulAPI_forum/models"
 	"go.uber.org/zap"
 )
@@ -42,22 +41,13 @@ func GetPostByID(pid int64) (*models.Post, error) {
 	return post, nil
 }
 
-func GetPosts(page, size int, sorted string) ([]*models.PostPreview, error) {
-	sqlStr := ""
-	if sorted == contant.SortedTime {
-		sqlStr = `
-	select postID, title, content, score, commID, status
+func GetPosts(page, size int) ([]*models.PostPreview, error) {
+	sqlStr := `
+	select postID, title, content, score, commID, status, create_time
 	from post
 	order by create_time desc
 	limit ? offset ?`
-	} else if sorted == contant.SortedScore {
-		sqlStr = `
-	select postID, title, content, score, commID, status
-	from post
-	order by score desc
-	limit ? offset ?`
-	}
-	offset := (page - 1) * size
+	offset := page * size
 
 	posts := make([]*models.PostPreview, 0, 10)
 	if err := db.Select(&posts, sqlStr, size, offset); err != nil {

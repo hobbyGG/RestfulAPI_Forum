@@ -55,14 +55,161 @@
             display: block;
             opacity: 1;
         }
+
+        #sort-buttons {
+            margin: 20px 0 20px 20px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #sort-buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px 0 0;
+        }
+
+        #sort-buttons #add-post-btn {
+            margin-right: 20px;
+            font-size: 24px;
+            line-height: 1;
+            padding: 5px 15px;
+        }
+
+        #sort-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        #posts-container {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 10px auto 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .post {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .post-content {
+            flex: 1;
+        }
+
+        .post-meta {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .vote-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .vote-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .post-time {
+            font-size: 0.8em;
+        }
+
+        #hot-ranking {
+            flex: 1;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-height: 200px;
+        }
+
+        /* 帖子创建弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            /* 修改宽度为更合适的值 */
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #post-form label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        #post-form input,
+        #post-form textarea {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+
+        #post-form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #post-form button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 
 <body>
     <!-- 导航栏 -->
     <div class="navbar">
-        <!-- 这里可以添加网站 logo 或者其他导航项 -->
-        <div>论坛</div>
+        <!-- 添加链接，点击论坛跳转回 index.html -->
+        <a href="index.html" style="text-decoration: none; color: inherit;">论坛</a>
         <div id="nav-right">
             <!-- 登录按钮 -->
             <a href="login.html" class="login-btn" id="login-link">登录</a>
@@ -75,6 +222,39 @@
         </div>
     </div>
     <h1>欢迎访问论坛</h1>
+
+    <!-- 排序按钮 -->
+    <div id="sort-buttons">
+        <button id="sort-toggle-btn">
+            <span id="time-sort" class="active">时间</span>
+        </button>
+        <button id="add-post-btn">+</button>
+    </div>
+
+    <!-- 帖子展示区域 -->
+    <div style="display: flex; gap: 20px; padding: 0 20px;">
+        <div id="posts-container" style="flex: 3;"></div>
+        <div id="hot-ranking"
+            style="flex: 1; background-color: white; border: 1px solid #ccc; border-radius: 5px; padding: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+            <h2>热门</h2>
+            <ul id="hot-ranking-list"></ul>
+        </div>
+    </div>
+
+    <!-- 帖子创建弹窗 -->
+    <div id="post-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>创建新帖子</h2>
+            <form id="post-form">
+                <label for="post-title">标题:</label>
+                <input type="text" id="post-title" required>
+                <label for="post-content">内容:</label>
+                <textarea id="post-content" required></textarea>
+                <button type="submit">发布</button>
+            </form>
+        </div>
+    </div>
 
     <script>
         // 获取 cookie 中的 token
@@ -135,7 +315,7 @@
                 profileBtn.addEventListener('mouseenter', showWindow);
                 // 鼠标移出按钮隐藏隐藏窗口
                 profileBtn.addEventListener('mouseleave', () => {
-                    if (!isMouseInWindow()) {
+                    if (!isMouseInWindow(event)) {
                         hideWindow();
                     }
                 });
@@ -172,8 +352,8 @@
             }
         }
 
-        // 判断鼠标是否在悬浮框内
-        function isMouseInWindow() {
+        // 判断鼠标是否在悬浮框内，通过参数传入 event 对象
+        function isMouseInWindow(event) {
             const hiddenWindow = document.getElementById('hidden-window');
             const rect = hiddenWindow.getBoundingClientRect();
             const mouseX = event.clientX;
@@ -187,6 +367,89 @@
         }
 
         // 页面加载时检查登录状态
+        let sortType = 'time';
+        const timeSortSpan = document.getElementById('time-sort');
+
+        function updateSortButtonStyle() {
+            timeSortSpan.classList.add('active');
+        }
+
+        // 切换排序类型
+        function toggleSort(newSortType) {
+            sortType = newSortType;
+            updateSortButtonStyle();
+            fetchPosts(sortType);
+        }
+
+        timeSortSpan.addEventListener('click', () => toggleSort('time'));
+
+        // 获取帖子
+        async function fetchPosts(sortBy = 'time') { // 默认使用 time 排序
+            try {
+                const response = await fetch(`http://127.0.0.1:8888/api/posts?sorted=${sortBy}`);
+                const data = await response.json();
+                if (data.code === 0) {
+                    renderPosts(data.data);
+                }
+            } catch (error) {
+                console.error('获取帖子时出错:', error);
+            }
+        }
+
+        // 渲染帖子
+        function renderPosts(posts) {
+            const postsContainer = document.getElementById('posts-container');
+            postsContainer.innerHTML = '';
+
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.innerHTML = `
+                    <div class="post-content">
+                        <!-- 修改链接，传递 id 参数 -->
+                        <h3><a href="post.html?id=${post.postID}">${post.title}</a></h3>
+                        <p>${post.content}</p>
+                    </div>
+                    <div class="post-meta">
+                        <p class="post-time">发布时间: ${new Date(post.createTime).toLocaleString()}</p>
+                    </div>
+                `;
+                postsContainer.appendChild(postElement);
+            });
+        }
+
+        // 新增获取热门帖子函数，修改请求地址
+        async function fetchHotPosts() {
+            try {
+                const response = await fetch('http://127.0.0.1:8888/api/posts?sorted=score');
+                const data = await response.json();
+                if (data.code === 0) {
+                    renderHotPosts(data.data);
+                }
+            } catch (error) {
+                console.error('获取热门帖子时出错:', error);
+            }
+        }
+
+        // 新增渲染热门帖子函数，只显示标题
+        function renderHotPosts(posts) {
+            const hotRankingList = document.getElementById('hot-ranking-list');
+            hotRankingList.innerHTML = '';
+
+            // 截取前 10 条帖子
+            const topTenPosts = posts.slice(0, 10);
+
+            topTenPosts.forEach((post, index) => {
+                const listItem = document.createElement('li');
+                // 修改跳转链接，跳转到 post.html 并携带 postID 参数
+                listItem.innerHTML = `
+                    <a href="post.html?id=${post.postID}">${index + 1}. ${post.title}</a>
+                `;
+                hotRankingList.appendChild(listItem);
+            });
+        }
+
+        // 修改 checkLoginStatus 函数，在页面加载时按时间排序获取帖子
         async function checkLoginStatus() {
             const token = getTokenFromCookie();
             if (token) {
@@ -195,7 +458,69 @@
             } else {
                 updateUI(false, null);
             }
+            // 页面加载时按时间排序获取帖子
+            fetchPosts('time');
+            updateSortButtonStyle();
+            // 页面加载时获取热门帖子
+            fetchHotPosts();
         }
+
+        // 获取模态框、关闭按钮和表单元素
+        const modal = document.getElementById('post-modal');
+        const closeBtn = document.querySelector('.close');
+        const addPostBtn = document.getElementById('add-post-btn');
+        const postForm = document.getElementById('post-form');
+
+        // 点击加号按钮显示模态框
+        addPostBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+
+        // 点击关闭按钮隐藏模态框
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // 点击模态框外部区域隐藏模态框
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // 表单提交处理
+        postForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+
+            try {
+                const response = await fetch('http://127.0.0.1:8888/api/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getTokenFromCookie()}`
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        content: content
+                    })
+                });
+
+                const data = await response.json();
+                if (data.code === 0) {
+                    console.log('帖子发布成功');
+                    modal.style.display = 'none';
+                    postForm.reset();
+                    // 重新获取帖子列表
+                    fetchPosts(sortType);
+                } else {
+                    console.error('帖子发布失败:', data.message);
+                }
+            } catch (error) {
+                console.error('请求出错:', error);
+            }
+        });
 
         window.addEventListener('load', checkLoginStatus);
     </script>

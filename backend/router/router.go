@@ -46,11 +46,12 @@ func Init() *gin.Engine {
 
 	})
 
-	api := r.Group("/api", middleware.RateLimit(time.Second*2, 5))
+	api := r.Group("/api", middleware.RateLimit(time.Millisecond, 500000))
 	{
 
 		api.POST("/signup", controllers.SignUpHandler)
 		api.POST("/login", controllers.LoginHandler)
+		api.GET("/posts", controllers.GetPostsHander)
 
 		api.Use(middleware.JWTAuth)
 
@@ -59,7 +60,6 @@ func Init() *gin.Engine {
 		api.POST("/vote", controllers.PostVoteHandler)
 
 		api.GET("/post/:id", controllers.GetPostHander)
-		api.GET("/posts", controllers.GetPostsHander)
 
 		api.GET("/ping", pingHandler)
 		api.POST("/loginAuth", loginAuthHandler)

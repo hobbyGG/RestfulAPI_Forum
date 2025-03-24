@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帖子页面</title>
+    <style>
+        body {
+            background-color: #e6f7ff;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .login-btn {
+            background-color: #e6f7ff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            color: black;
+        }
+
+        .login-btn:hover {
+            background-color: #b3d9ff;
+        }
+
+        .hidden-window {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            right: 30px;
+            top: 50px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .hidden-window.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .post-header {
+            background-color: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-content-box {
+            background-color: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .like-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .like-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <!-- 添加链接，点击论坛跳转回 index.html -->
+        <a href="index.html" style="text-decoration: none; color: inherit;">论坛</a>
+        <div id="nav-right">
+            <!-- 登录按钮 -->
+            <a href="login.html" class="login-btn" id="login-link">登录</a>
+            <!-- 靠近隐藏窗口的按钮 -->
+            <button class="login-btn" id="profile-btn" style="display: none;"></button>
+            <!-- 隐藏窗口 -->
+            <div class="hidden-window" id="hidden-window">
+                <button class="login-btn" id="logout-btn">注销</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 帖子头部信息框 -->
+    <div class="post-header">
+        <div>
+            <h1 id="post-title"></h1>
+            <p>作者 UID: <span id="post-author"></span></p>
+            <p>热度: <span id="post-score"></span></p>
+        </div>
+        <button class="like-button" id="like-button">赞一个</button>
+    </div>
+
+    <!-- 帖子内容框 -->
+    <div class="post-content-box">
+        <p id="post-content"></p>
+    </div>
+
+    <script>
+        // 获取 cookie 中的 token
+        function getTokenFromCookie() {
+            const name = 'token=';
+            const ca = document.cookie.split('; ');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return null;
+        }
+
+        // 验证 token
+        async function verifyToken(token) {
+            try {
+                const response = await fetch('http://127.0.0.1:8888/api/loginAuth', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                return { isValid: data.code === 0, userData: data.data };
+            } catch (error) {
+                console.error('验证 token 时出错:', error);
+                return { isValid: false, userData: null };
+            }
+        }
+
+        // 更新页面元素
+        function updateUI(isLoggedIn, userData) {
+            const loginLink = document.getElementById('login-link');
+            const profileBtn = document.getElementById('profile-btn');
+            const hiddenWindow = document.getElementById('hidden-window');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (isLoggedIn) {
+                loginLink.style.display = 'none';
+                profileBtn.style.display = 'inline-block';
+                // 修改个人中心按钮文本
+                profileBtn.textContent = userData ? userData : '个人中心';
+
+                const showWindow = () => {
+                    hiddenWindow.classList.add('show');
+                };
+
+                const hideWindow = () => {
+                    hiddenWindow.classList.remove('show');
+                };
+
+                // 鼠标悬停到按钮显示隐藏窗口
+                profileBtn.addEventListener('mouseenter', showWindow);
+                // 鼠标移出按钮隐藏隐藏窗口
+                profileBtn.addEventListener('mouseleave', (event) => {
+                    if (!isMouseInWindow(event)) {
+                        hideWindow();
+                    }
+                });
+
+                // 鼠标悬停到悬浮框保持显示
+                hiddenWindow.addEventListener('mouseenter', showWindow);
+                // 鼠标移出悬浮框隐藏
+                hiddenWindow.addEventListener('mouseleave', hideWindow);
+
+                // 点击注销按钮携带 token 访问 /api/logout 接口，随后刷新页面
+                logoutBtn.addEventListener('click', async () => {
+                    const token = getTokenFromCookie();
+                    if (token) {
+                        try {
+                            await fetch('http://127.0.0.1:8888/api/logout', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            });
+                        } catch (error) {
+                            console.error('注销请求出错:', error);
+                        }
+                    }
+                    // 清除 cookie 中的 token
+                    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    // 刷新页面
+                    window.location.reload();
+                });
+            } else {
+                loginLink.style.display = 'inline-block';
+                profileBtn.style.display = 'none';
+                hiddenWindow.style.display = 'none';
+            }
+        }
+
+        // 判断鼠标是否在悬浮框内，通过参数传入 event 对象
+        function isMouseInWindow(event) {
+            const hiddenWindow = document.getElementById('hidden-window');
+            const rect = hiddenWindow.getBoundingClientRect();
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            return (
+                mouseX >= rect.left &&
+                mouseX <= rect.right &&
+                mouseY >= rect.top &&
+                mouseY <= rect.bottom
+            );
+        }
+
+        // 页面加载时检查登录状态
+        window.addEventListener('load', async () => {
+            const token = getTokenFromCookie();
+            if (token) {
+                const { isValid, userData } = await verifyToken(token);
+                updateUI(isValid, userData);
+            } else {
+                updateUI(false, null);
+            }
+
+            // 获取 URL 中的帖子 ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const postID = urlParams.get('id');
+            if (postID) {
+                try {
+                    const token = getTokenFromCookie();
+                    const headers = {
+                        'Content-Type': 'application/json'
+                    };
+                    if (token) {
+                        headers['Authorization'] = `Bearer ${token}`;
+                    }
+                    const response = await fetch(`http://127.0.0.1:8888/api/post/${postID}`, {
+                        method: 'GET',
+                        headers: headers
+                    });
+                    const data = await response.json();
+                    if (data.code === 0) {
+                        const post = data.data;
+                        document.getElementById('post-title').textContent = post.title;
+                        document.getElementById('post-author').textContent = post.AuthorUID;
+                        document.getElementById('post-score').textContent = post.Score;
+                        document.getElementById('post-content').textContent = post.content;
+                    }
+                } catch (error) {
+                    console.error('获取帖子信息时出错:', error);
+                }
+            }
+
+            // 为点赞按钮添加点击事件监听器
+            const likeButton = document.getElementById('like-button');
+            if (likeButton && postID) {
+                likeButton.addEventListener('click', async () => {
+                    try {
+                        const token = getTokenFromCookie();
+                        const headers = {
+                            'Content-Type': 'application/json'
+                        };
+                        if (token) {
+                            headers['Authorization'] = `Bearer ${token}`;
+                        }
+
+                        // 修改 postID 为 string 类型
+                        const requestBody = {
+                            postID: postID,
+                            vote: 1
+                        };
+
+                        const response = await fetch('http://127.0.0.1:8888/api/vote', {
+                            method: 'POST',
+                            headers: headers,
+                            body: JSON.stringify(requestBody)
+                        });
+
+                        const responseData = await response.json();
+                        if (response.ok) {
+                            console.log('点赞成功:', responseData);
+                        } else {
+                            console.error('点赞失败:', responseData);
+                        }
+                    } catch (error) {
+                        console.error('点赞请求出错:', error);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

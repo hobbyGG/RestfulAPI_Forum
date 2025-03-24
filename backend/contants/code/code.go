@@ -5,6 +5,7 @@ type Code int16
 const (
 	Success Code = iota
 	InvalidParam
+	WrongPwd
 	EmialExisted
 	NeedAuth
 	AuthType
@@ -16,6 +17,7 @@ const (
 var codeMsgMap = map[Code]string{
 	Success:      "success",
 	InvalidParam: "参数错误",
+	WrongPwd:     "用户名或密码错误",
 	EmialExisted: "邮箱已被占用",
 	NeedAuth:     "需要认证",
 	AuthType:     "auth认证类型错误",

@@ -141,7 +141,8 @@
                                 this.errorMessage = `注册失败: ${result.msg}`;
                             } else {
                                 console.log('注册成功:', result.msg);
-                                // 注册成功暂时不处理
+                                // 注册成功后重定向到登录界面，假设登录页面为 login.html
+                                window.location.href = 'login.html';
                             }
                         })
                         .catch(error => {

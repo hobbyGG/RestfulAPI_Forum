@@ -13,6 +13,7 @@ var (
 	ErrUserNotExisted   = errors.New("用户不存在")
 	ErrUserEmailExisted = errors.New("邮箱已被占用")
 	ErrPwd              = errors.New("用户名或密码错误")
+	ErrInvalidParam     = errors.New("参数错误")
 	ErrNotLogin         = errors.New("用户未登录")
 	ErrNeedAuth         = errors.New("需要token")
 	ErrInvalidHeader    = errors.New("header格式错误")

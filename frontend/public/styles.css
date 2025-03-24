@@ -1,0 +1,27 @@
+body {
+    background-color: #e6f7ff;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background-color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.login-btn {
+    background-color: #e6f7ff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+
+.login-btn:hover {
+    background-color: #b3d9ff;
+}
