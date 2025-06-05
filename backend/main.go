@@ -31,6 +31,8 @@ const (
 	retryPeriod    = 5 * time.Second
 )
 
+// 投票功能重写
+
 func main() {
 	// 读取配置文件
 	var setPath string

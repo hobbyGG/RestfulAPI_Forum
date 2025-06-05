@@ -12,6 +12,13 @@ create table `user` (
     unique key `idx_user_id` (`user_id`)
 ) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_general_ci;
 
+-- 插入测试用户数据
+INSERT INTO `user` (`user_id`, `username`, `password`, `email`)
+VALUES 
+(-1, 'test1', '123', 'test1@example.com'),
+(-2, 'test2', '123', 'test2@example.com'),
+(-3, 'test3', '123', 'test3@example.com');
+
 CREATE Table `post` (
     `postID` BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `authorUID` BIGINT(20) NOT NULL,
@@ -22,7 +29,7 @@ CREATE Table `post` (
     `content` VARCHAR(8192) NOT NULL COLLATE utf8mb4_general_ci,
     `create_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    # 建议使用下面的约束
+    -- 建议使用下面的约束
     UNIQUE KEY `idx_postID` (`postID`),
     key `id_authorUID` (`authorUID`),
     KEY `idx_commID` (`commID`)

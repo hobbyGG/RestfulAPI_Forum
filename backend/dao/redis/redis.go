@@ -17,8 +17,8 @@ const (
 	KeyPostInfoHset = "rforum:post:info"
 
 	// 每个帖子的投票情况
-	KeyPostVoteZsetPrefix = "rforum:post:"
-	KeyPostVoteZsetSuffix = ":vote"
+	KeyPostVoteSetPrefix = "rforum:post:"
+	KeyPostVoteSetSuffix = ":vote"
 
 	// 帖子排行
 	KeyPostRankZset = "rforum:post:rank"

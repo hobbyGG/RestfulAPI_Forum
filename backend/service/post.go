@@ -111,6 +111,9 @@ func GetPosts(page, size int, sorted string) ([]*models.PostPreview, error) {
 func PostVote(pid int64, uid int64, vote int16) error {
 	// 直接根据投票结果进行修改
 	defer SyncScoreToMysql(pid)
+
+	var len1, len2 int64 // 用于标记表是否发生了变化
+	len1 = redis.GetPostVoteLen(pid)
 	// 先在PostVot修改该用户投票情况
 	if vote != 1 && vote != 0 {
 		return errors.ErrInvalidParam
@@ -120,12 +123,23 @@ func PostVote(pid int64, uid int64, vote int16) error {
 	} else if vote == 0 {
 		return redis.RmVote(pid, uid)
 	}
+	len2 = redis.GetPostVoteLen(pid)
 
-	// 计算新的得分
-	score, _ := redis.GetPostScore(pid)
+	change := len2 - len1
+	zap.L().Info("info", zap.Int64("change", change))
+	newScore, _ := redis.GetPostScore(pid)
 
-	// 更新postRank表
-	redis.UpdatePostRank(pid, score)
+	switch change {
+	case 1:
+		// 本次投票人数增加了
+		newScore += contant.VoteScore
+		zap.L().Info("info", zap.Int64("socre", newScore))
+	case -1:
+		// 有人取消投票
+		newScore -= contant.VoteScore
+	}
+	// 更新postRank表的分数
+	redis.UpdatePostRank(pid, newScore)
 
 	return nil
 }

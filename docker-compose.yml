@@ -1,0 +1,70 @@
+services:
+  rforum-server:
+    build: ./backend
+    ports:
+      - "8888:8888"
+    networks:
+      - rfNet
+    depends_on:
+      rforum-db:
+        condition: service_healthy
+      rforum-rdb:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888" ]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    # command: ["./rforum", "-f", "./settings"]
+  rforum-db:
+    image: mysql:9.1
+    environment:
+      - MYSQL_ROOT_PASSWORD=123
+      - MYSQL_DATABASE=rforum
+    ports:
+      - 13306:3306
+    networks:
+      - rfNet
+    volumes:
+      - ./backend/dao/mysql/initSql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD" ]
+      interval: 30s
+      timeout: 90s
+      retries: 5
+      start_period: 90s
+  rforum-rdb:
+    image: redis:7.4.2
+    environment:
+      - REDIS_PORT=6379
+    ports:
+      - 16379:6379
+    networks:
+      - rfNet
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-h", "localhost", "-p", "6379", "ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+  frontend:
+    image: nginx:1.26.3
+    ports:
+      - "8000:80"
+    volumes:
+      - ./frontend/public:/usr/share/nginx/html
+    environment:
+      - NGINX_PORT=80 # 设置环境变量
+    networks:
+      - rfNet
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80" ] # 健康检查命令
+      interval: 10s # 检查间隔
+      timeout: 30s # 超时时间
+      retries: 5 # 重试次数
+      start_period: 30s # 启动等待时间
+
+networks:
+  rfNet:
+    driver: bridge

@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/go-redis/redis"
-	"github.com/hobbyGG/RestfulAPI_forum/contants/contant"
 	"github.com/hobbyGG/RestfulAPI_forum/contants/errors"
 	"github.com/hobbyGG/RestfulAPI_forum/models"
 	"go.uber.org/zap"
@@ -66,51 +65,38 @@ func GetPostInfo(pid string) (string, error) {
 	return cli.HGet(KeyPostInfoHset, pid).Result()
 }
 
-func GetVote(pid, uid int64) (int16, error) {
-	key := GetPostVoteKey(pid)
-	uidStr := strconv.Itoa(int(uid))
-	score, err := cli.ZScore(key, uidStr).Result()
-	if err != nil {
-		return 0, err
-	}
-	return int16(score), nil
-}
-
 func Vote(pid, uid int64, vote int16) error {
 	key := GetPostVoteKey(pid)
-	return cli.ZAdd(key, redis.Z{
-		Score:  float64(vote),
-		Member: uid,
-	}).Err()
+	return cli.SAdd(key, uid).Err()
 }
 
 func RmVote(pid, uid int64) error {
 	key := GetPostVoteKey(pid)
-	return cli.ZRem(key, redis.Z{
-		Member: uid,
-	}).Err()
+	return cli.SRem(key, uid).Err()
 }
 
 func GetPostVoteKey(pid int64) string {
 	pidStr := strconv.Itoa(int(pid))
-	return KeyPostVoteZsetPrefix + pidStr + KeyPostVoteZsetSuffix
+	return KeyPostVoteSetPrefix + pidStr + KeyPostVoteSetSuffix
 }
 
+// GetPostScore 根据帖子id返回该帖子的分数
 func GetPostScore(pid int64) (int64, error) {
-	key := GetPostVoteKey(pid)
-	mems, err := cli.ZRangeWithScores(key, 0, -1).Result()
+	key := KeyPostRankZset
+	pidStr := strconv.Itoa(int(pid))
+	score, err := cli.ZScore(key, pidStr).Result()
 	if err != nil {
-		zap.L().Error("cli.ZRangeWithScores error", zap.Error(err))
-		return 0, err
+		zap.L().Error("cli.ZScore(key, pidStr) error", zap.Error(err))
+		return -1, err
 	}
 
-	// 计算分数
-	var score int64 = 0
-	for _, mem := range mems {
-		score += int64(mem.Score)
-	}
-	score *= contant.VoteScore
-	return score, nil
+	return int64(score), err
+}
+
+func GetPostVoteLen(pid int64) int64 {
+	key := GetPostVoteKey(pid)
+	l, _ := cli.SCard(key).Result()
+	return l
 }
 
 func UpdatePostRank(pid, score int64) error {
